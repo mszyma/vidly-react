@@ -7,6 +7,7 @@ import ItemList from "./common/itemList";
 import MoviesTable from "./moviesTable";
 import _ from "lodash";
 import { Link } from "react-router-dom";
+import SearchBox from "./searchBox";
 
 class Movies extends Component {
   state = {
@@ -14,6 +15,8 @@ class Movies extends Component {
     genres: [],
     currentPage: 1,
     pageSize: 4,
+    selectedGenre: null,
+    searchQuery: "",
     sortColumn: { path: "title", order: "asc" }
   };
 
@@ -49,19 +52,27 @@ class Movies extends Component {
     this.setState({ sortColumn });
   };
 
+  handleSearch = query => {
+    this.setState({ searchQuery: query, selectedGenre: null, currentPage: 1 });
+  };
+
   getPageData = () => {
     const {
       pageSize,
       currentPage,
       selectedGenre,
+      searchQuery,
       movies: allMovies,
       sortColumn
     } = this.state;
 
-    const filtered =
-      selectedGenre && selectedGenre._id
-        ? allMovies.filter(m => m.genre._id === selectedGenre._id)
-        : allMovies;
+    let filtered = allMovies;
+    if (searchQuery)
+      filtered = allMovies.filter(m =>
+        m.title.toLowerCase().startsWith(searchQuery.toLowerCase())
+      );
+    else if (selectedGenre && selectedGenre._id)
+      filtered = allMovies.filter(m => m.genre._id === selectedGenre._id);
 
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
 
@@ -77,6 +88,7 @@ class Movies extends Component {
       currentPage,
       selectedGenre,
       genres,
+      searchQuery,
       sortColumn
     } = this.state;
 
@@ -98,7 +110,10 @@ class Movies extends Component {
             <Link to="/movies/new">
               <button className="btn btn-primary mt-5">New Movie</button>
             </Link>
-            <p className="pt-3">Showing {totalCount} movies in the database.</p>
+            <p className="pt-3 mb-0">
+              Showing {totalCount} movies in the database.
+            </p>
+            <SearchBox value={searchQuery} onChange={this.handleSearch} />
             <MoviesTable
               movies={movies}
               sortColumn={sortColumn}
