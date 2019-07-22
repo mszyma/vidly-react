@@ -3,6 +3,8 @@ import { NavLink, Link } from "react-router-dom";
 
 class NavBar extends Component {
   render() {
+    const { user } = this.props;
+
     return (
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <Link to="/" className="navbar-brand">
@@ -30,12 +32,26 @@ class NavBar extends Component {
             <NavLink className="nav-link nav-item" to="/rentals">
               Rentals
             </NavLink>
-            <NavLink className="nav-link nav-item" to="/login">
-              Login
-            </NavLink>
-            <NavLink className="nav-link nav-item" to="/register">
-              Register
-            </NavLink>
+            {!user && (
+              <React.Fragment>
+                <NavLink className="nav-link nav-item" to="/login">
+                  Login
+                </NavLink>
+                <NavLink className="nav-link nav-item" to="/register">
+                  Register
+                </NavLink>
+              </React.Fragment>
+            )}
+            {user && (
+              <React.Fragment>
+                <NavLink className="nav-link nav-item" to="/profile">
+                  {user.name}
+                </NavLink>
+                <NavLink className="nav-link nav-item" to="/Logout">
+                  Logout
+                </NavLink>
+              </React.Fragment>
+            )}
           </div>
         </div>
       </nav>

@@ -56,8 +56,7 @@ class Movies extends Component {
   };
 
   handleListGenreChange = genre => {
-    console.log(genre);
-    this.setState({ selectedGenre: genre, currentPage: 1 });
+    this.setState({ selectedGenre: genre, currentPage: 1, searchQuery: "" });
   };
 
   handleSort = sortColumn => {
@@ -103,6 +102,7 @@ class Movies extends Component {
       searchQuery,
       sortColumn
     } = this.state;
+    const { user } = this.props;
 
     if (count === 0) return <p>There are no movies in the database</p>;
 
@@ -119,9 +119,11 @@ class Movies extends Component {
         </div>
         <div className="col">
           <div>
-            <Link to="/movies/new">
-              <button className="btn btn-primary mt-5">New Movie</button>
-            </Link>
+            {user && (
+              <Link to="/movies/new">
+                <button className="btn btn-primary mt-5">New Movie</button>
+              </Link>
+            )}
             <p className="pt-3 mb-0">
               Showing {totalCount} movies in the database.
             </p>
